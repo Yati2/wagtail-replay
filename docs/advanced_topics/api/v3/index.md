@@ -91,3 +91,15 @@ class BlogPage(Page):
         APIField("thumbnail", serializer=ImageRenditionField("fill-300x300")),
     ]
 ```
+
+## Documents
+
+Documents are available at `/api/v3/documents/`. The routes are flat rather than nested under collections:
+
+- `GET /documents/`: list documents. Anonymous access, excluding documents whose direct collection has an unpassed view restriction. Supports `?search=`, `?order=`, and field filtering.
+- `GET /documents/{id}/`: document detail. Anonymous access, with the same direct-collection restriction behavior as the list endpoint.
+- `POST /documents/`: create a document using `multipart/form-data`. Both `file` (the binary) and `title` are required; send other writable metadata such as `collection_id` as individual form fields.
+- `PATCH /documents/{id}/`: update writable metadata as JSON. The document file cannot be replaced through this endpoint.
+- `DELETE /documents/{id}/`: delete a document.
+
+Document uploads enforce `WAGTAILDOCS_EXTENSIONS`, `WAGTAILDOCS_MAX_UPLOAD_SIZE`, custom form validation, and collection permissions in the same way as admin uploads. Extension validation checks the filename and does not verify that the file contents match the extension; see [](user_uploaded_files) for guidance on handling untrusted uploads.
